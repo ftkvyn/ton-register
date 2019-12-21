@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Teacher's app!</title>
+    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+	<link rel="stylesheet" href="./styles/main.css">
+  </head>
+  <body>
+    <h1>Teacher's app!</h1>
+
+	<p id='config_validation_txt'></p>
+
+	<section class='courses-area card'>
+		<h2>Courses <div class="reload" id='load_cources'>↺</div> </h2>
+		<div id='cources-container'>
+			<ul id='courcesEl'></ul>
+		</div>
+		<form id='new_contract_form' class="card">
+			<h3>Create new course contract</h3>
+			<input type="text" name="info" required placeholder="Course info" maxlength="100"/>
+			<input type="number" required name="students_count" placeholder="Students count" />
+			<input type="submit" class="btn" value="Create" />
+		</form>
+		<form id='add_known_course' class="card">
+			<h3>Add existing course contract</h3>
+			<input type="text" name="addr" required placeholder="Course address"/>
+			<input type="submit" class="btn" value="Add" />
+		</form>
+	</section>
+
+	<section class="single-course-area card">
+		<h2 class="title">Select a course</h2>
+		<ul class="list"></ul>
+		<form id='add_student' style="display:none" class="card">
+			<p>Add student</p>
+			<input type="number" max="4294967294" name="id" required placeholder="New student id"/>
+			<input type="submit" class="btn" value="Add" />
+		</form>
+	</section>
+
+	<section class="single-student-area card" style="display:none;">
+		<h2 class="name">Select a student</h2>
+		<ul class="list"></ul>
+		<form id='add_mark' style="display:none" class="card">
+			<p>Add Mark</p>
+			<input type="number" max="100" name="mark" required placeholder="Mark"/>
+			<input type="text" maxlength="100" name="comment" placeholder="Comment" />
+			<input type="submit" class="btn" value="Add" />
+		</form>
+	</section>
+
+	<script>
+		const { ipcRenderer } = require('electron');
+	</script>
+	<script src="./ui_scripts/validate.js"></script>
+	<script src="./ui_scripts/contracts.js"></script>
+	<script>
+		validateConfig(config_validation_txt);
+	</script>
+  </body>
+</html>

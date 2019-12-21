@@ -1,0 +1,49 @@
+#!/usr/bin/env fift -s
+"TonUtil.fif" include
+
+{ ."usage: " @' $0 type ." <register-addr-file> <teacher-key-name> <seqno> <student-id> <mark> <comment> [<savefile>]" cr
+  ."Creates a request to create a new mark. Register address is taken from <register-addr-file>.addr" cr
+  ."Owner's private key is loaded from the file <teacher-key-name>.pk." cr
+  ."Saves it into <savefile>.boc ('new-mark-query.boc' by default)" cr 1 halt
+} : usage
+$# dup 6 < swap 7 > or ' usage if
+
+$1 =: register_addr_file
+$2 =: key_name
+$3 parse-int =: seqno
+$4 parse-int =: student-id
+$5 parse-int =: mark
+$6 =: comment
+def? $7 { @' $7 } { "new-mark-query" } cond constant savefile
+
+{ $len 8 * } : bit_len 
+{ dup $>s swap bit_len u@ } : to_uint
+
+register_addr_file +".addr" load-address
+2dup 2constant register_addr
+."Register address = " 2dup .addr cr 6 .Addr cr
+
+key_name +".pk" load-keypair 
+constant key_priv
+constant key_pub
+
+<b
+   comment $,
+b> constant msg_text_cell
+
+<b 1 4 u, // mode=1 new mark
+   seqno 32 u, // seq_no
+   student-id 32 u,
+   mark 8 u,
+   msg_text_cell ref,
+b> // mode=1 new mark
+constant new_mark_msg
+
+new_mark_msg hash key_priv ed25519_sign_uint constant signature
+  
+<b b{1000100} s, register_addr addr, 0 Gram, b{00} s,
+   signature B, new_mark_msg ref, b>
+dup ."resulting external message: " <s csr. cr
+2 boc+>B dup Bx. cr
+savefile +"-query.boc" tuck B>file
+."(Saved to file " type .")" cr

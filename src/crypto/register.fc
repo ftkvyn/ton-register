@@ -1,0 +1,211 @@
+() save_internal_data(seq_no, teacher_public_key, principal_public_key, students_dict, info) impure {
+  set_data(begin_cell()
+      .store_uint(seq_no, 32)
+      .store_uint(teacher_public_key, 256)
+      .store_uint(principal_public_key, 256)
+      .store_dict(students_dict)
+      .store_ref(info)
+      ;; Students dictionary format:
+      ;;    Key - student id, 32 bit
+      ;;    Value - marks dictionary
+      ;; Marks dictionary format:
+      ;;    Key - timestamp
+      ;;    Value - cell with mark info - mark itself, comment, other info.
+      ;;
+      ;; use DICTGETNEXT and DICTMIN and similar
+      
+      .end_cell());
+}
+
+;; (int seq_no, int teacher_key, int principal_key, cell students_dict, cell info)
+(int, int, int, cell, cell) load_internal_data() {
+    slice data_slice = get_data().begin_parse();
+    int seq_num = data_slice~load_uint(32);
+    int teacher_key = data_slice~load_uint(256);
+    int principal_key = data_slice~load_uint(256);
+    cell students_dict = data_slice~load_dict();
+    cell info = data_slice~load_ref();
+
+    return (seq_num, teacher_key, principal_key, students_dict, info);
+}
+
+cell create_student(cell stud_dict, int student_id) {
+    cell stud_marks_dict = new_dict();
+    stud_dict~udict_set_builder(32, student_id, begin_cell().store_dict(stud_marks_dict));
+    return stud_dict;
+}
+
+(cell, int) get_student(cell stud_dict, int student_id) {
+    (slice student_marks_slice, int is_found) = stud_dict.udict_get?(32, student_id);
+    ifnot (is_found) {
+      return (null(), 0);
+    }
+    return (student_marks_slice~load_dict(), -1);
+}
+
+cell create_mark(int mark_num, cell mark_text, cell stud_marks_dict) {
+    var mark = begin_cell()
+            .store_uint(mark_num, 8)
+            .store_ref(mark_text)
+            ;
+    stud_marks_dict~udict_set_builder(32, now(), mark);
+    return stud_marks_dict;
+}
+
+int recv_internal(slice in_msg) impure {
+  return -1;
+}
+
+int recv_external(slice in_msg) impure {
+
+    var signature = in_msg~load_bits(512);
+    cell msg_body = in_msg~load_ref();
+
+    (int stored_seqno, int teacher_key, int principal_key, cell students_dict, cell info) = load_internal_data();
+    
+    slice msg_slice = msg_body.begin_parse();
+    int mode = msg_slice~load_uint(4);
+
+    int msg_seqno = msg_slice~load_uint(32);
+    throw_unless(35, stored_seqno == msg_seqno);
+    stored_seqno = stored_seqno + 1;
+    ;; Initializaion. Works only on the first run, when stored_seqno == 0
+    if (mode == 0) {
+        throw_unless(11, stored_seqno == 1);
+        throw_unless(34, check_signature(cell_hash(msg_body), signature, teacher_key));
+
+        accept_message();
+
+        save_internal_data(stored_seqno, teacher_key, principal_key, students_dict, info);
+
+        return -1;
+    }
+
+    ;; New mark. Only for a teacher
+    if (mode == 1) {
+        throw_unless(34, check_signature(cell_hash(msg_body), signature, teacher_key));
+
+        int student_id = msg_slice~load_uint(32);
+        (cell stud_marks_dict, int is_student_found) = get_student(students_dict, student_id);
+        throw_unless(38, is_student_found);
+        
+        int mark_num = msg_slice~load_uint(8);
+        cell mark_text = msg_slice~load_ref();
+
+        accept_message();
+        
+        stud_marks_dict = create_mark(mark_num, mark_text, stud_marks_dict);
+        students_dict~udict_set_builder(32, student_id, begin_cell().store_dict(stud_marks_dict));
+
+        save_internal_data(stored_seqno, teacher_key, principal_key, students_dict, info);
+
+        return -1;
+    }
+
+    ;; New student. Only for a teacher
+    if (mode == 2) {
+        throw_unless(34, check_signature(cell_hash(msg_body), signature, teacher_key));
+
+        int student_id = msg_slice~load_uint(32);
+        (cell stud_marks_dict, int is_student_found) = get_student(students_dict, student_id);
+        throw_if(41, is_student_found);
+
+        accept_message();
+
+        students_dict = create_student(students_dict, student_id);
+
+        save_internal_data(stored_seqno, teacher_key, principal_key, students_dict, info);
+
+        return -1;
+    }
+
+    ;; Updating teacher's key by a teacher. Only for a teacher
+    if (mode == 3) {
+        throw_unless(34, check_signature(cell_hash(msg_body), signature, teacher_key));
+        int new_key = msg_slice~load_uint(256);
+        accept_message();
+
+        save_internal_data(stored_seqno, new_key, principal_key, students_dict, info);
+
+        return -1;
+    }
+
+    ;; Updating teacher's key by a principal. Only for a principal
+    if (mode == 4) {
+        throw_unless(43, check_signature(cell_hash(msg_body), signature, principal_key));
+
+        int new_key = msg_slice~load_uint(256);
+        accept_message();
+
+        save_internal_data(stored_seqno, new_key, principal_key, students_dict, info);
+
+        return -1;
+    }
+
+    ;; Updating principal's key by a principal. Only for a principal
+    if (mode == 5) {
+        throw_unless(43, check_signature(cell_hash(msg_body), signature, principal_key));
+
+        int new_key = msg_slice~load_uint(256);
+        accept_message();
+
+        save_internal_data(stored_seqno, teacher_key, new_key, students_dict, info);
+
+        return -1;
+    }
+
+    throw_if(404, -1); ;; unknown method
+    return 404;
+}
+
+;; returns the list of all participants of current elections with their stakes
+_ student_marks(int sutdent_id) method_id {
+  (_, _, _, cell students_dict, _) = load_internal_data();
+  
+  if (students_dict.null?()) {
+    return nil;
+  }
+  (slice student_marks_slice, int is_found) = students_dict.udict_get?(32, sutdent_id);
+  ifnot (is_found) {
+    return nil;
+  }
+  cell stud_marks_dict = student_marks_slice~load_dict();
+  var marks_list = nil;
+  int last_mark_time = 0;
+  
+  do {
+    (last_mark_time, slice mark_slice, int is_found) = stud_marks_dict.udict_get_next?(32, last_mark_time);
+    if (is_found) {
+      marks_list = cons(triple(last_mark_time, mark_slice~load_uint(8), mark_slice~load_ref().begin_parse()), marks_list);
+    }
+  } until (~ is_found);
+  return marks_list;
+}
+
+_ students() method_id {
+    (_, _, _, cell students_dict, _) = load_internal_data();
+    if (students_dict.null?()) {
+        return nil;
+    }
+
+    var students_list = nil;
+    int last_student_id = 0;
+  
+    do {
+        (last_student_id, _, int is_found) = students_dict.udict_get_next?(32, last_student_id);
+        if (is_found) {
+            students_list = cons(last_student_id, students_list);
+        }
+    } until (~ is_found);
+    return students_list;
+}
+
+int seqno() method_id {
+    (int seqno, _, _, _, _) = load_internal_data();
+    return seqno;
+}
+
+_ get_info() method_id {
+    (_, _, _, _, cell info) = load_internal_data();
+    return info.begin_parse();
+}

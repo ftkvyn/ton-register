@@ -1,0 +1,38 @@
+#!/usr/bin/env fift -s
+"TonUtil.fif" include
+
+{ ."usage: " @' $0 type ." <register-addr-file> <teacher-key-name> <seqno> <student-id> [<savefile>]" cr
+  ."Creates a request to create a new student. Register address is taken from <register-addr-file>.addr" cr
+  ."Teachers's private key is loaded from the file <teacher-key-name>.pk." cr
+  ."Saves it into <savefile>.boc ('new-student-query.boc' by default)" cr 1 halt
+} : usage
+$# dup 4 < swap 5 > or ' usage if
+
+$1 =: register_addr_file
+$2 =: key_name
+$3 parse-int =: seqno
+$4 parse-int =: student-id
+def? $5 { @' $5 } { "new-student-query" } cond constant savefile
+
+register_addr_file +".addr" load-address
+2dup 2constant register_addr
+."Register address = " 2dup .addr cr 6 .Addr cr
+
+key_name +".pk" load-keypair 
+constant key_priv
+constant key_pub
+
+<b 2 4 u, // mode=2 new student
+   seqno 32 u, // seq_no
+   student-id 32 u,
+b> // mode=2 new student
+constant new_student_msg
+
+new_student_msg hash key_priv ed25519_sign_uint constant signature
+  
+<b b{1000100} s, register_addr addr, 0 Gram, b{00} s,
+   signature B, new_student_msg ref, b>
+dup ."resulting external message: " <s csr. cr
+2 boc+>B dup Bx. cr
+savefile +"-query.boc" tuck B>file
+."(Saved to file " type .")" cr

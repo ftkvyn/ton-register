@@ -1,0 +1,449 @@
+"Asm.fif" include
+// automatically generated from `./src/crypto/lib/stdlib.fc` `./src/crypto/register.fc` 
+PROGRAM{
+  DECLPROC save_internal_data
+  DECLPROC load_internal_data
+  DECLPROC create_student
+  DECLPROC get_student
+  DECLPROC create_mark
+  DECLPROC recv_internal
+  DECLPROC recv_external
+  108431 DECLMETHOD student_marks
+  82957 DECLMETHOD students
+  85143 DECLMETHOD seqno
+  71178 DECLMETHOD info
+  save_internal_data PROC:<{
+    NEWC
+    s1 s5 XCHG
+    32 STU
+    s1 s3 XCHG
+    256 STU
+    256 STU
+    STDICT
+    STREF
+    ENDC
+    c4 POP
+  }>
+  load_internal_data PROC:<{
+    c4 PUSH
+    CTOS
+    32 LDU
+    256 LDU
+    256 LDU
+    LDDICT
+    LDREF
+    DROP
+  }>
+  create_student PROC:<{
+    NEWDICT
+    NEWC
+    STDICT
+    32 PUSHINT
+    s1 s3 XCHG
+    DICTUSETB
+  }>
+  get_student PROC:<{
+    32 PUSHINT
+    s1 s2 XCHG
+    DICTUGET
+    NULLSWAPIFNOT
+    IFNOTJMP:<{
+      DROP
+      PUSHNULL
+      0 PUSHINT
+    }>
+    LDDICT
+    DROP
+    -1 PUSHINT
+  }>
+  create_mark PROC:<{
+    NEWC
+    s1 s3 XCHG
+    8 STU
+    STREF
+    NOW
+    32 PUSHINT
+    s2 s3 XCHG
+    s1 s2 XCHG
+    DICTUSETB
+  }>
+  recv_internal PROC:<{
+    DROP
+    -1 PUSHINT
+  }>
+  recv_external PROC:<{
+    9 PUSHPOW2
+    LDSLICEX
+    LDREF
+    DROP
+    load_internal_data CALLDICT
+    s5 PUSH
+    CTOS
+    4 LDU
+    32 LDU
+    s7 PUSH
+    SWAP
+    s0 s2 XCHG
+    EQUAL
+    35 THROWIFNOT
+    s0 s6 XCHG
+    INC
+    OVER
+    0 EQINT
+    IFJMP:<{
+      NIP
+      s5 POP
+      s4 PUSH
+      1 EQINT
+      11 THROWIFNOT
+      s0 s5 XCHG
+      HASHCU
+      SWAP
+      s0 s6 XCHG
+      s3 PUSH
+      CHKSIGNU
+      34 THROWIFNOT
+      ACCEPT
+      s2 s4 XCHG
+      s1 s3 XCHG
+      s0 s2 XCHG
+      SWAP
+      save_internal_data CALLDICT
+      -1 PUSHINT
+    }>
+    OVER
+    1 EQINT
+    IFJMP:<{
+      NIP
+      s0 s6 XCHG
+      HASHCU
+      SWAP
+      s0 s7 XCHG
+      s4 PUSH
+      CHKSIGNU
+      34 THROWIFNOT
+      s0 s3 XCHG
+      32 LDU
+      s4 PUSH
+      s2 PUSH
+      get_student CALLDICT
+      38 THROWIFNOT
+      SWAP
+      8 LDU
+      LDREF
+      DROP
+      ACCEPT
+      s1 s2 XCHG
+      SWAP
+      create_mark CALLDICT
+      NEWC
+      STDICT
+      32 PUSHINT
+      s1 s3 XCHG
+      s1 s5 XCHG
+      DICTUSETB
+      s3 s4 XCHG
+      s1 s3 XCHG
+      SWAP
+      save_internal_data CALLDICT
+      -1 PUSHINT
+    }>
+    OVER
+    2 EQINT
+    IFJMP:<{
+      NIP
+      s0 s6 XCHG
+      HASHCU
+      SWAP
+      s0 s7 XCHG
+      s4 PUSH
+      CHKSIGNU
+      34 THROWIFNOT
+      s0 s3 XCHG
+      32 LDU
+      DROP
+      s3 PUSH
+      OVER
+      get_student CALLDICT
+      NIP
+      41 THROWIF
+      ACCEPT
+      s1 s3 XCHG
+      create_student CALLDICT
+      s3 s4 XCHG
+      s1 s3 XCHG
+      SWAP
+      save_internal_data CALLDICT
+      -1 PUSHINT
+    }>
+    OVER
+    3 EQINT
+    IFJMP:<{
+      NIP
+      s0 s6 XCHG
+      HASHCU
+      s0 s2 XCHG
+      s1 s7 XCHG
+      s0 s4 XCHG
+      CHKSIGNU
+      34 THROWIFNOT
+      s0 s2 XCHG
+      256 LDU
+      DROP
+      ACCEPT
+      s3 s4 XCHG
+      s0 s3 XCHG
+      save_internal_data CALLDICT
+      -1 PUSHINT
+    }>
+    OVER
+    4 EQINT
+    IFJMP:<{
+      NIP
+      s4 POP
+      s0 s5 XCHG
+      HASHCU
+      SWAP
+      s0 s6 XCHG
+      s2 PUSH
+      CHKSIGNU
+      43 THROWIFNOT
+      s0 s2 XCHG
+      256 LDU
+      DROP
+      ACCEPT
+      s1 s4 XCHG
+      s0 s3 XCHG
+      save_internal_data CALLDICT
+      -1 PUSHINT
+    }>
+    SWAP
+    5 EQINT
+    IFJMP:<{
+      s0 s6 XCHG
+      HASHCU
+      s0 s2 XCHG
+      s1 s7 XCHG
+      s0 s3 XCHG
+      CHKSIGNU
+      43 THROWIFNOT
+      s0 s2 XCHG
+      256 LDU
+      DROP
+      ACCEPT
+      s3 s4 XCHG
+      s1 s3 XCHG
+      s0 s2 XCHG
+      SWAP
+      save_internal_data CALLDICT
+      -1 PUSHINT
+    }>
+    DROP
+    DROP
+    DROP
+    DROP
+    DROP
+    DROP
+    DROP
+    DROP
+    404 THROW
+    404 PUSHINT
+  }>
+  student_marks PROC:<{
+    load_internal_data CALLDICT
+    DROP
+    NIP
+    NIP
+    NIP
+    DUP
+    ISNULL
+    IFJMP:<{
+      DROP
+      DROP
+      PUSHNULL
+    }>
+    32 PUSHINT
+    DICTUGET
+    NULLSWAPIFNOT
+    IFNOTJMP:<{
+      DROP
+      PUSHNULL
+    }>
+    LDDICT
+    DROP
+    PUSHNULL
+    0 PUSHINT
+    UNTIL:<{
+      32 PUSHINT
+      s3 PUSH
+      SWAP
+      DICTUGETNEXT
+      NULLSWAPIFNOT
+      NULLSWAPIFNOT
+      DUP
+      IF:<{
+        s0 s2 XCHG
+        8 LDU
+        LDREF
+        DROP
+        CTOS
+        s2 PUSH
+        s0 s2 XCHG
+        SWAP
+        TRIPLE
+        SWAP
+        s0 s3 XCHG
+        CONS
+      }>ELSE<{
+        s1 s3 XCHG
+        s0 s2 XCHG
+        DROP
+      }>
+      SWAP
+      NOT
+      s1 s2 XCHG
+    }>
+    DROP
+    NIP
+  }>
+  students PROC:<{
+    load_internal_data CALLDICT
+    DROP
+    NIP
+    NIP
+    NIP
+    DUP
+    ISNULL
+    IFJMP:<{
+      DROP
+      PUSHNULL
+    }>
+    PUSHNULL
+    0 PUSHINT
+    UNTIL:<{
+      32 PUSHINT
+      s3 PUSH
+      SWAP
+      DICTUGETNEXT
+      NULLSWAPIFNOT
+      NULLSWAPIFNOT
+      s2 POP
+      OVER
+      IF:<{
+        DUP
+        s0 s3 XCHG
+        CONS
+      }>ELSE<{
+        s0 s2 XCHG
+      }>
+      SWAP
+      NOT
+      s1 s2 XCHG
+    }>
+    DROP
+    NIP
+  }>
+  seqno PROC:<{
+    load_internal_data CALLDICT
+    DROP
+    DROP
+    DROP
+    DROP
+  }>
+  info PROC:<{
+    load_internal_data CALLDICT
+    NIP
+    NIP
+    NIP
+    NIP
+    CTOS
+  }>
+}END>c
+constant code
+
+0 tuple 0x076ef1ea , // magic
+0 , 0 , // actions msg_sents
+1570470873 , // unix_time
+1 , 1 , 0 , // block_lt, trans_lt, rand_seed
+0 tuple 9223372036854775807 , dictnew , , // remaining balance
+0 , dictnew , // contract_address, global_config
+1 tuple // wrap to another tuple
+constant c7 
+
+"TonUtil.fif" include
+
+{ $len 8 * } : bit_len 
+{ dup $>s swap bit_len u@ } : to_uint
+
+"Test register 2019" constant info
+"Good job!" constant msg_text
+"test_key" constant key_name
+7 constant seqno
+5 constant mark_num
+123 constant student_id
+-1 33 2constant register_addr
+
+key_name +".pk" load-generate-keypair 
+constant key_priv
+constant key_pub
+
+dictnew constant studs-dict
+dictnew constant stud-marks
+
+<b stud-marks dict, b> <s student_id studs-dict 32 udict!
+
+drop
+constant studs-dict
+
+<b 
+    seqno 32 u, 
+    key_pub B,
+    key_pub B, // same key for teacher and principal
+    studs-dict dict,
+    <b info $, b> ref,
+ b> constant storage
+
+<b msg_text $, b> <s csr.
+
+<b
+   msg_text $,
+b> constant msg_text_cell
+
+<b 1 4 u, // mode=1 new mark
+   seqno 32 u, // seq_no
+   student_id 32 u,
+   mark_num 8 u,
+   msg_text_cell ref,
+b> // mode=1 new mark
+constant new_mark_msg
+
+new_mark_msg hash key_priv ed25519_sign_uint constant signature
+
+new_mark_msg hash
+key_priv
+key_pub 
+signature .s
+
+// all this stuff is needed only for real messages, not for running TVM localy
+// <b b{1000100} s, register_addr addr, 0 Gram, b{00} s,
+<b
+   signature B, new_mark_msg ref, b>
+ <s constant message
+
+."Message: " cr message csr. cr
+."Storage: " cr storage <s csr. cr
+
+message -1 code <s storage c7 runvmctx 
+
+// Test for initializing students dict
+
+constant updated_storage
+constant exit_code
+."Exit code " exit_code . cr
+."Updated storage: " cr updated_storage <s csr. cr
+
+student_id 108431 code <s updated_storage c7 runvmctx // student marks
+
+constant updated_storage
+constant exit_code
+ .dump cr

@@ -1,0 +1,5 @@
+{
+	"lite-client-config" : "C:\\Temp",
+	"lite-client-bin": "C:\\Temp\\lc.exe",
+	"data-storage": "C:\\Temp\\ton-projects\\register\\temp\\data.mock.json",
+}
