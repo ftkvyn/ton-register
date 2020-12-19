@@ -1,0 +1,3 @@
+src/freeton-crypto/compile.sh
+src/freeton-crypto/test*
+src/freeton-crypto/*.tvc
