@@ -54,6 +54,8 @@ contract Register {
         teacher_public_key = tvm.pubkey();
     }
 
+    /// Setters
+
     /// @dev Giving a new mark to a student
     function addMark(uint32 studentId, uint8 markValue, string message) public teacherOnly {
         Mark newMark = Mark(markValue, message);
@@ -83,5 +85,27 @@ contract Register {
 
     function updatePrincipalsKey(uint256 newKey) public principalOnly {
         teacher_public_key = newKey;
+    }
+
+    /// Getters
+
+    function getStudents() public view returns (uint32[] studentIds){
+        optional(uint32, Mark[]) nextPair = marks_dict.min();
+
+        while (nextPair.hasValue()) {
+            (uint32 studentId, ) = nextPair.get();
+            studentIds.push(studentId);
+            nextPair = marks_dict.next(studentId);
+        }
+
+        return studentIds;
+    }
+
+    function getStudentMarks(uint32 studentId) public view returns (Mark[] marks){
+        optional(Mark[]) student_marks = marks_dict.fetch(studentId);
+
+        if (student_marks.hasValue()) {
+            marks = student_marks.get();
+        }
     }
 }

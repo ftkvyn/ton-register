@@ -625,6 +625,374 @@ SETGLOB 10
 DROP
 ; end modifier principalOnly
 
+.globl	getStudents
+.public	getStudents
+.type	getStudents, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+ENDS
+; function getStudents
+;; ret param: studentIds
+PUSHINT 0
+NEWDICT
+PAIR
+;; map.min
+;; push identifier marks_dict
+GETGLOB 12
+PUSHINT 32
+DICTUMIN
+PUSHCONT {
+	SWAP
+	LDU 32
+	PLDDICT
+	PAIR
+	TUPLE 2
+}
+PUSHCONT {
+	NULL
+}
+IFELSE
+;; decl: nextPair
+; while
+PUSHCONT {
+	;; push identifier nextPair
+	DUP
+	ISNULL
+	NOT
+}
+PUSHCONT {
+	;; push identifier nextPair
+	DUP
+	DUP
+	ISNULL
+	THROWIF 63
+	UNTUPLE 2
+	;; decl: studentId
+	; expValue
+	PUSH S3
+	; end expValue
+	;; push identifier studentId
+	PUSH S2
+	;; array.push(..)
+	NEWC
+	STU 32
+	SWAP
+	UNPAIR
+	PUSH S1
+	INC
+	XCHG s3
+	ROTREV
+	PUSHINT 32
+	DICTUSETB
+	PAIR
+	; colValue
+	POP s4
+	; end colValue
+	;; map.next
+	;; push identifier studentId
+	PUSH S1
+	;; push identifier marks_dict
+	GETGLOB 12
+	PUSHINT 32
+	DICTUGETNEXT
+	PUSHCONT {
+		SWAP
+		LDU 32
+		PLDDICT
+		PAIR
+		TUPLE 2
+	}
+	PUSHCONT {
+		NULL
+	}
+	IFELSE
+	; expValue
+	; end expValue
+	; colValue
+	POP s3
+	; end colValue
+	DROP2
+}
+WHILE
+; end while
+;; return
+;; push identifier studentIds
+PUSH S1
+NIP
+NIP
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST xd649b8fb
+	PUSH S1
+	UNPAIR
+	XCHG s2
+	STU 32
+	STDICT
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+}
+IF
+DROP
+; end function getStudents
+PUSHCONT {
+	CALL $c7_to_c4$
+}
+IF
+TRUE
+SETGLOB 7
+
+.globl	getStudents_internal
+.type	getStudents_internal, @function
+; function getStudents
+;; ret param: studentIds
+PUSHINT 0
+NEWDICT
+PAIR
+;; map.min
+;; push identifier marks_dict
+GETGLOB 12
+PUSHINT 32
+DICTUMIN
+PUSHCONT {
+	SWAP
+	LDU 32
+	PLDDICT
+	PAIR
+	TUPLE 2
+}
+PUSHCONT {
+	NULL
+}
+IFELSE
+;; decl: nextPair
+; while
+PUSHCONT {
+	;; push identifier nextPair
+	DUP
+	ISNULL
+	NOT
+}
+PUSHCONT {
+	;; push identifier nextPair
+	DUP
+	DUP
+	ISNULL
+	THROWIF 63
+	UNTUPLE 2
+	;; decl: studentId
+	; expValue
+	PUSH S3
+	; end expValue
+	;; push identifier studentId
+	PUSH S2
+	;; array.push(..)
+	NEWC
+	STU 32
+	SWAP
+	UNPAIR
+	PUSH S1
+	INC
+	XCHG s3
+	ROTREV
+	PUSHINT 32
+	DICTUSETB
+	PAIR
+	; colValue
+	POP s4
+	; end colValue
+	;; map.next
+	;; push identifier studentId
+	PUSH S1
+	;; push identifier marks_dict
+	GETGLOB 12
+	PUSHINT 32
+	DICTUGETNEXT
+	PUSHCONT {
+		SWAP
+		LDU 32
+		PLDDICT
+		PAIR
+		TUPLE 2
+	}
+	PUSHCONT {
+		NULL
+	}
+	IFELSE
+	; expValue
+	; end expValue
+	; colValue
+	POP s3
+	; end colValue
+	DROP2
+}
+WHILE
+; end while
+;; return
+;; push identifier studentIds
+PUSH S1
+NIP
+NIP
+; end function getStudents
+
+.globl	getStudentMarks
+.public	getStudentMarks
+.type	getStudentMarks, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode studentId
+LDU 32
+ENDS
+;; param: studentId
+; function getStudentMarks
+;; ret param: marks
+PUSHINT 0
+NEWDICT
+PAIR
+;; map.fetch
+;; push identifier studentId
+PUSH S1
+;; push identifier marks_dict
+GETGLOB 12
+PUSHINT 32
+DICTUGET
+NULLSWAPIFNOT
+PUSHCONT {
+	LDU 32
+	PLDDICT
+	PAIR
+}
+IF
+;; decl: student_marks
+;; if
+;; push identifier student_marks
+DUP
+ISNULL
+PUSHCONT {
+	;; push identifier student_marks
+	DUP
+	DUP
+	ISNULL
+	THROWIF 63
+	; expValue
+	; end expValue
+	; colValue
+	POP s2
+	; end colValue
+}
+IFNOT
+;; end if
+;; returning named params
+ROT
+DROP2
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST x87bd96f7
+	PUSH S1
+	UNPAIR
+	XCHG s2
+	STU 32
+	STDICT
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+}
+IF
+DROP
+; end function getStudentMarks
+PUSHCONT {
+	CALL $c7_to_c4$
+}
+IF
+TRUE
+SETGLOB 7
+
+.globl	getStudentMarks_internal
+.type	getStudentMarks_internal, @function
+;; param: studentId
+; function getStudentMarks
+;; ret param: marks
+PUSHINT 0
+NEWDICT
+PAIR
+;; map.fetch
+;; push identifier studentId
+PUSH S1
+;; push identifier marks_dict
+GETGLOB 12
+PUSHINT 32
+DICTUGET
+NULLSWAPIFNOT
+PUSHCONT {
+	LDU 32
+	PLDDICT
+	PAIR
+}
+IF
+;; decl: student_marks
+;; if
+;; push identifier student_marks
+DUP
+ISNULL
+PUSHCONT {
+	;; push identifier student_marks
+	DUP
+	DUP
+	ISNULL
+	THROWIF 63
+	; expValue
+	; end expValue
+	; colValue
+	POP s2
+	; end colValue
+}
+IFNOT
+;; end if
+;; returning named params
+ROT
+DROP2
+; end function getStudentMarks
+
 .globl	c7_to_c4
 .type	c7_to_c4, @function
 GETGLOB 2

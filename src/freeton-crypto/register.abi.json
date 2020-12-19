@@ -43,6 +43,23 @@
 			],
 			"outputs": [
 			]
+		},
+		{
+			"name": "getStudents",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"studentIds","type":"uint32[]"}
+			]
+		},
+		{
+			"name": "getStudentMarks",
+			"inputs": [
+				{"name":"studentId","type":"uint32"}
+			],
+			"outputs": [
+				{"components":[{"name":"mark","type":"uint8"},{"name":"message","type":"bytes"}],"name":"marks","type":"tuple[]"}
+			]
 		}
 	],
 	"data": [
