@@ -17,7 +17,7 @@ contract Register {
     string public info;
 
     // Function to receive plain transfers.
-    receive() external payable {
+    receive() external {
     }
 
     modifier checkOwner {
@@ -55,7 +55,7 @@ contract Register {
     }
 
     /// @dev Giving a new mark to a student
-    function newMark(uint32 studentId, uint8 markValue, string message) public teacherOnly {
+    function addMark(uint32 studentId, uint8 markValue, string message) public teacherOnly {
         Mark newMark = Mark(markValue, message);
         optional(Mark[]) student_marks_opt = marks_dict.fetch(studentId);
         
@@ -67,12 +67,12 @@ contract Register {
         marks_dict.replace(studentId, student_marks_array);
     }
 
-    function newStudent(uint32 studentId) public teacherOnly {
+    function addStudent(uint32 studentId) public teacherOnly {
         optional(Mark[]) student_marks_opt = marks_dict.fetch(studentId);
         
         require(!student_marks_opt.hasValue(), 41); // student must NOT exist;
 
-        Mark[] marks_empty = [];
+        Mark[] marks_empty;
 
         marks_dict.add(studentId, marks_empty);
     }

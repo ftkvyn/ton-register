@@ -1,0 +1,52 @@
+{
+	"ABI version": 2,
+	"header": ["time"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"_info","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "addMark",
+			"inputs": [
+				{"name":"studentId","type":"uint32"},
+				{"name":"markValue","type":"uint8"},
+				{"name":"message","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "addStudent",
+			"inputs": [
+				{"name":"studentId","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateTeachersKey",
+			"inputs": [
+				{"name":"newKey","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updatePrincipalsKey",
+			"inputs": [
+				{"name":"newKey","type":"uint256"}
+			],
+			"outputs": [
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	]
+}

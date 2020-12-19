@@ -1,0 +1,812 @@
+.globl	constructor
+.public	constructor
+.type	constructor, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7_with_init_storage$
+}
+IF
+;; constructor protection
+GETGLOB 6
+THROWIF 51
+PUSHINT 1
+SETGLOB 6
+;; end constructor protection
+; Decode input parameters
+; Decode _info
+LDREF
+ENDS
+;; param: _info
+; modifier checkOwner
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+GETGLOB 2
+;; ==
+EQUAL
+THROWIFNOT 100
+ACCEPT
+; constructor Register
+; expValue
+; end expValue
+;; push identifier _info
+DUP
+; colValue
+SETGLOB 13
+; end colValue
+GETGLOB 2
+; expValue
+; end expValue
+; colValue
+SETGLOB 10
+; end colValue
+; end constructor Register
+DROP
+; end modifier checkOwner
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	addMark
+.public	addMark
+.type	addMark, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode studentId
+LDU 32
+; Decode markValue
+LDU 8
+; Decode message
+LDREF
+ENDS
+;; param: studentId
+;; param: markValue
+;; param: message
+; modifier teacherOnly
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; push identifier teacher_public_key
+GETGLOB 10
+;; ==
+EQUAL
+THROWIFNOT 100
+ACCEPT
+; function addMark
+;; push identifier markValue
+PUSH S1
+;; push identifier message
+PUSH S1
+TUPLE 2
+;; decl: newMark
+;; map.fetch
+;; push identifier studentId
+PUSH S3
+;; push identifier marks_dict
+GETGLOB 12
+PUSHINT 32
+DICTUGET
+NULLSWAPIFNOT
+PUSHCONT {
+	LDU 32
+	PLDDICT
+	PAIR
+}
+IF
+;; decl: student_marks_opt
+;; push identifier student_marks_opt
+DUP
+ISNULL
+NOT
+THROWIFNOT 38
+;; push identifier student_marks_opt
+DUP
+DUP
+ISNULL
+THROWIF 63
+;; decl: student_marks_array
+; expValue
+DUP
+; end expValue
+;; push identifier newMark
+PUSH S3
+;; array.push(..)
+UNTUPLE 2
+NEWC
+PUSH S2
+STUR 8
+PUSH S1
+STREFR
+NIP
+NIP
+SWAP
+UNPAIR
+PUSH S1
+INC
+XCHG s3
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+; colValue
+NIP
+; end colValue
+;; map.replace
+; expValue
+;; fetch marks_dict
+GETGLOB 12
+; end expValue
+;; push identifier student_marks_array
+PUSH S1
+UNPAIR
+SWAP
+NEWC
+STU 32
+STDICT
+;; push identifier studentId
+PUSH S7
+ROT
+PUSHINT 32
+DICTUREPLACEB
+SWAP
+; colValue
+SETGLOB 12
+; end colValue
+DROP
+BLKDROP 3
+; end function addMark
+BLKDROP 3
+; end modifier teacherOnly
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	addMark_internal
+.type	addMark_internal, @function
+;; param: studentId
+;; param: markValue
+;; param: message
+; modifier teacherOnly
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; push identifier teacher_public_key
+GETGLOB 10
+;; ==
+EQUAL
+THROWIFNOT 100
+ACCEPT
+; function addMark
+;; push identifier markValue
+PUSH S1
+;; push identifier message
+PUSH S1
+TUPLE 2
+;; decl: newMark
+;; map.fetch
+;; push identifier studentId
+PUSH S3
+;; push identifier marks_dict
+GETGLOB 12
+PUSHINT 32
+DICTUGET
+NULLSWAPIFNOT
+PUSHCONT {
+	LDU 32
+	PLDDICT
+	PAIR
+}
+IF
+;; decl: student_marks_opt
+;; push identifier student_marks_opt
+DUP
+ISNULL
+NOT
+THROWIFNOT 38
+;; push identifier student_marks_opt
+DUP
+DUP
+ISNULL
+THROWIF 63
+;; decl: student_marks_array
+; expValue
+DUP
+; end expValue
+;; push identifier newMark
+PUSH S3
+;; array.push(..)
+UNTUPLE 2
+NEWC
+PUSH S2
+STUR 8
+PUSH S1
+STREFR
+NIP
+NIP
+SWAP
+UNPAIR
+PUSH S1
+INC
+XCHG s3
+ROTREV
+PUSHINT 32
+DICTUSETB
+PAIR
+; colValue
+NIP
+; end colValue
+;; map.replace
+; expValue
+;; fetch marks_dict
+GETGLOB 12
+; end expValue
+;; push identifier student_marks_array
+PUSH S1
+UNPAIR
+SWAP
+NEWC
+STU 32
+STDICT
+;; push identifier studentId
+PUSH S7
+ROT
+PUSHINT 32
+DICTUREPLACEB
+SWAP
+; colValue
+SETGLOB 12
+; end colValue
+DROP
+BLKDROP 3
+; end function addMark
+BLKDROP 3
+; end modifier teacherOnly
+
+.globl	addStudent
+.public	addStudent
+.type	addStudent, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode studentId
+LDU 32
+ENDS
+;; param: studentId
+; modifier teacherOnly
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; push identifier teacher_public_key
+GETGLOB 10
+;; ==
+EQUAL
+THROWIFNOT 100
+ACCEPT
+; function addStudent
+;; map.fetch
+;; push identifier studentId
+DUP
+;; push identifier marks_dict
+GETGLOB 12
+PUSHINT 32
+DICTUGET
+NULLSWAPIFNOT
+PUSHCONT {
+	LDU 32
+	PLDDICT
+	PAIR
+}
+IF
+;; decl: student_marks_opt
+;; !
+;; push identifier student_marks_opt
+DUP
+ISNULL
+NOT
+NOT
+THROWIFNOT 41
+PUSHINT 0
+NEWDICT
+PAIR
+;; decl: marks_empty
+;; map.add
+; expValue
+;; fetch marks_dict
+GETGLOB 12
+; end expValue
+;; push identifier marks_empty
+PUSH S1
+UNPAIR
+SWAP
+NEWC
+STU 32
+STDICT
+;; push identifier studentId
+PUSH S4
+ROT
+PUSHINT 32
+DICTUADDB
+SWAP
+; colValue
+SETGLOB 12
+; end colValue
+DROP
+DROP2
+; end function addStudent
+DROP
+; end modifier teacherOnly
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	addStudent_internal
+.type	addStudent_internal, @function
+;; param: studentId
+; modifier teacherOnly
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; push identifier teacher_public_key
+GETGLOB 10
+;; ==
+EQUAL
+THROWIFNOT 100
+ACCEPT
+; function addStudent
+;; map.fetch
+;; push identifier studentId
+DUP
+;; push identifier marks_dict
+GETGLOB 12
+PUSHINT 32
+DICTUGET
+NULLSWAPIFNOT
+PUSHCONT {
+	LDU 32
+	PLDDICT
+	PAIR
+}
+IF
+;; decl: student_marks_opt
+;; !
+;; push identifier student_marks_opt
+DUP
+ISNULL
+NOT
+NOT
+THROWIFNOT 41
+PUSHINT 0
+NEWDICT
+PAIR
+;; decl: marks_empty
+;; map.add
+; expValue
+;; fetch marks_dict
+GETGLOB 12
+; end expValue
+;; push identifier marks_empty
+PUSH S1
+UNPAIR
+SWAP
+NEWC
+STU 32
+STDICT
+;; push identifier studentId
+PUSH S4
+ROT
+PUSHINT 32
+DICTUADDB
+SWAP
+; colValue
+SETGLOB 12
+; end colValue
+DROP
+DROP2
+; end function addStudent
+DROP
+; end modifier teacherOnly
+
+.globl	updateTeachersKey
+.public	updateTeachersKey
+.type	updateTeachersKey, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode newKey
+LDU 256
+ENDS
+;; param: newKey
+; modifier teacherOrPrincipal
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; push identifier teacher_public_key
+GETGLOB 10
+;; ==
+EQUAL
+;; short-circuiting ||
+DUP
+PUSHCONT {
+	DROP
+	GETGLOB 5
+	DUP
+	ISNULL
+	PUSHCONT {
+		DROP
+		PUSHINT 0
+	}
+	IF
+	;; push identifier principal_public_key
+	GETGLOB 11
+	;; ==
+	EQUAL
+}
+IFNOT
+THROWIFNOT 100
+ACCEPT
+; function updateTeachersKey
+; expValue
+; end expValue
+;; push identifier newKey
+DUP
+; colValue
+SETGLOB 10
+; end colValue
+; end function updateTeachersKey
+DROP
+; end modifier teacherOrPrincipal
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	updateTeachersKey_internal
+.type	updateTeachersKey_internal, @function
+;; param: newKey
+; modifier teacherOrPrincipal
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; push identifier teacher_public_key
+GETGLOB 10
+;; ==
+EQUAL
+;; short-circuiting ||
+DUP
+PUSHCONT {
+	DROP
+	GETGLOB 5
+	DUP
+	ISNULL
+	PUSHCONT {
+		DROP
+		PUSHINT 0
+	}
+	IF
+	;; push identifier principal_public_key
+	GETGLOB 11
+	;; ==
+	EQUAL
+}
+IFNOT
+THROWIFNOT 100
+ACCEPT
+; function updateTeachersKey
+; expValue
+; end expValue
+;; push identifier newKey
+DUP
+; colValue
+SETGLOB 10
+; end colValue
+; end function updateTeachersKey
+DROP
+; end modifier teacherOrPrincipal
+
+.globl	updatePrincipalsKey
+.public	updatePrincipalsKey
+.type	updatePrincipalsKey, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode newKey
+LDU 256
+ENDS
+;; param: newKey
+; modifier principalOnly
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; push identifier principal_public_key
+GETGLOB 11
+;; ==
+EQUAL
+THROWIFNOT 100
+ACCEPT
+; function updatePrincipalsKey
+; expValue
+; end expValue
+;; push identifier newKey
+DUP
+; colValue
+SETGLOB 10
+; end colValue
+; end function updatePrincipalsKey
+DROP
+; end modifier principalOnly
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	updatePrincipalsKey_internal
+.type	updatePrincipalsKey_internal, @function
+;; param: newKey
+; modifier principalOnly
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; push identifier principal_public_key
+GETGLOB 11
+;; ==
+EQUAL
+THROWIFNOT 100
+ACCEPT
+; function updatePrincipalsKey
+; expValue
+; end expValue
+;; push identifier newKey
+DUP
+; colValue
+SETGLOB 10
+; end colValue
+; end function updatePrincipalsKey
+DROP
+; end modifier principalOnly
+
+.globl	c7_to_c4
+.type	c7_to_c4, @function
+GETGLOB 2
+NEWC
+STU 256
+GETGLOB 3
+STUR 64
+GETGLOB 6
+STUR 1
+GETGLOB 10
+GETGLOB 11
+GETGLOB 12
+GETGLOB 13
+REVERSE 5, 0
+STU 256
+STU 256
+STDICT
+STREF
+ENDC
+POP C4
+
+.globl	c4_to_c7
+.type	c4_to_c7, @function
+PUSHROOT
+CTOS        ; c4
+LDU 256      ; pubkey c4
+LDU 64      ; pubkey timestamp c4
+LDU 1       ; pubkey [timestamp] constructor_flag memory
+LDU 256
+LDU 256
+LDDICT
+PLDREF
+SETGLOB 13
+SETGLOB 12
+SETGLOB 11
+SETGLOB 10
+TRUE
+SETGLOB 1   ; pubkey [timestamp] constructor_flag
+SETGLOB 6   ; pubkey [timestamp]
+SETGLOB 3   ; D
+SETGLOB 2
+
+.macro c4_to_c7_with_init_storage
+PUSHROOT
+CTOS        ; c4
+DUP        ; c4 c4
+SBITS      ; c4 bits
+GTINT 1    ; c4 bits>1
+PUSHCONT {
+	LDU 256      ; pubkey c4
+	LDU 64      ; pubkey timestamp c4
+	LDU 1       ; pubkey [timestamp] constructor_flag memory
+	LDU 256
+	LDU 256
+	LDDICT
+	PLDREF
+	SETGLOB 13
+	SETGLOB 12
+	SETGLOB 11
+	SETGLOB 10
+	TRUE
+	SETGLOB 1   ; pubkey [timestamp] constructor_flag
+	SETGLOB 6   ; pubkey [timestamp]
+	SETGLOB 3   ; D
+	SETGLOB 2
+}
+PUSHCONT {
+	PLDDICT   ; D
+	; init teacher_public_key
+	PUSHINT 0
+	SETGLOB 10
+	; init principal_public_key
+	PUSHINT 0
+	SETGLOB 11
+	; init marks_dict
+	NEWDICT
+	SETGLOB 12
+	; init info
+	NEWC
+	ENDC
+	SETGLOB 13
+	; set contract pubkey
+	PUSHINT 0
+	SWAP
+	PUSHINT 64
+	DICTUGET
+	THROWIFNOT 61
+	PLDU 256
+	SETGLOB 2
+	PUSHINT 0 ; timestamp
+	SETGLOB 3
+	PUSHINT 0 ; constructor_flag
+	SETGLOB 6
+	TRUE
+	SETGLOB 1
+}
+IFELSE
+
+.internal-alias :main_internal,        0
+.internal	:main_internal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function: main_internal
+;; param: contract_balance
+;; param: msg_balance
+;; param: int_msg_info
+;; param: msg_body_slice
+PUSHINT 0  ; main_external trans id
+PUSH S2
+CTOS
+PLDU 4
+MODPOW2 1
+IFRET
+PUSH S1    ; body
+SEMPTY     ; isEmpty
+IFRET
+PUSH S1 ; body
+LDU 32  ; funcId body'
+PUSH S1 ; funcId body' funcId
+IFNOTRET
+PUSH S1 ; funcId body' funcId
+LESSINT 3            ; funcId body' funcId<3
+PUSH S2              ; funcId body' funcId<3 funcId
+PUSHINT 4294967293   ; funcId body' funcId<3 funcId 4294967293
+GREATER              ; funcId body' funcId<3 funcId>4294967293
+OR                   ; funcId body' funcId<3||funcId>4294967293
+PUSHCONT {
+	DROP2
+	THROW 60
+}
+IFJMP
+SWAP    ; body funcId
+CALL 1
+GETGLOB 7
+ISNULL
+PUSHCONT {
+	DROP
+	THROW 60
+}
+IF
+
+.internal-alias :main_external,        -1
+.internal	:main_external
+PUSHINT -1 ; main_external trans id
+PUSH S1
+CALL $c4_to_c7_with_init_storage$
+LDU 1 ; haveSign msgSlice
+SWAP
+PUSHCONT {
+	PUSHINT 512
+	LDSLICEX ; signatureSlice msgSlice
+	DUP      ; signatureSlice msgSlice msgSlice
+	HASHSU   ; signatureSlice msgSlice hashMsgSlice
+	ROT
+	GETGLOB 2
+	DUP
+	SETGLOB 5
+	CHKSIGNU      ; msgSlice isSigned
+	THROWIFNOT 40 ; msgSlice
+}
+IF
+LDU 64                         ; timestamp msgSlice
+SWAP                           ; msgSlice timestamp
+CALL $replay_protection_macro$ ; msgSlice
+LDU  32 ; funcId body
+PUSH S1 ; funcId body funcId
+LESSINT 3            ; funcId body' funcId<3
+PUSH S2              ; funcId body' funcId<3 funcId
+PUSHINT 4294967293   ; funcId body' funcId<3 funcId 4294967293
+GREATER              ; funcId body' funcId<3 funcId>4294967293
+OR                   ; funcId body' funcId<3||funcId>4294967293
+PUSHCONT {
+	DROP2
+	THROW 60
+}
+IFJMP
+SWAP    ; body funcId
+CALL 1
+GETGLOB 7
+ISNULL
+PUSHCONT {
+	DROP
+	THROW 60
+}
+IF
+
