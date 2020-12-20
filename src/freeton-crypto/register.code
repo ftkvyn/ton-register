@@ -14,10 +14,7 @@ PUSHINT 1
 SETGLOB 6
 ;; end constructor protection
 ; Decode input parameters
-; Decode _info
-LDREF
 ENDS
-;; param: _info
 ; modifier checkOwner
 GETGLOB 5
 DUP
@@ -35,8 +32,7 @@ ACCEPT
 ; constructor Register
 ; expValue
 ; end expValue
-;; push identifier _info
-DUP
+PUSHINT 7
 ; colValue
 SETGLOB 13
 ; end colValue
@@ -47,7 +43,6 @@ GETGLOB 2
 SETGLOB 10
 ; end colValue
 ; end constructor Register
-DROP
 ; end modifier checkOwner
 CALL $c7_to_c4$
 TRUE
@@ -720,11 +715,8 @@ PUSHCONT {
 }
 WHILE
 ; end while
-;; return
-;; push identifier studentIds
-PUSH S1
-NIP
-NIP
+;; returning named params
+DROP
 ;; emitting 1 value(s)
 PUSH S1
 EQINT -1
@@ -848,11 +840,8 @@ PUSHCONT {
 }
 WHILE
 ; end while
-;; return
-;; push identifier studentIds
-PUSH S1
-NIP
-NIP
+;; returning named params
+DROP
 ; end function getStudents
 
 .globl	getStudentMarks
@@ -1010,7 +999,7 @@ REVERSE 5, 0
 STU 256
 STU 256
 STDICT
-STREF
+STU 32
 ENDC
 POP C4
 
@@ -1024,7 +1013,7 @@ LDU 1       ; pubkey [timestamp] constructor_flag memory
 LDU 256
 LDU 256
 LDDICT
-PLDREF
+PLDU 32
 SETGLOB 13
 SETGLOB 12
 SETGLOB 11
@@ -1048,7 +1037,7 @@ PUSHCONT {
 	LDU 256
 	LDU 256
 	LDDICT
-	PLDREF
+	PLDU 32
 	SETGLOB 13
 	SETGLOB 12
 	SETGLOB 11
@@ -1071,8 +1060,7 @@ PUSHCONT {
 	NEWDICT
 	SETGLOB 12
 	; init info
-	NEWC
-	ENDC
+	PUSHINT 0
 	SETGLOB 13
 	; set contract pubkey
 	PUSHINT 0

@@ -5,7 +5,6 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"_info","type":"bytes"}
 			],
 			"outputs": [
 			]

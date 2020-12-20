@@ -14,7 +14,7 @@ contract Register {
     uint256 teacher_public_key; // not using tvm.pubkey() as the value may change
     uint256 principal_public_key;
     mapping(uint32 => Mark[]) marks_dict;
-    string public info;
+    uint32 public info;
 
     // Function to receive plain transfers.
     receive() external {
@@ -49,8 +49,8 @@ contract Register {
     }
 
     /// @dev Contract constructor.
-    constructor(string _info) public checkOwner {
-        info = _info;
+    constructor() public checkOwner {
+        info = 7; // hardcoded for now
         teacher_public_key = tvm.pubkey();
     }
 
@@ -97,8 +97,6 @@ contract Register {
             studentIds.push(studentId);
             nextPair = marks_dict.next(studentId);
         }
-
-        return studentIds;
     }
 
     function getStudentMarks(uint32 studentId) public view returns (Mark[] marks){

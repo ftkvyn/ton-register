@@ -1,3 +1,5 @@
 src/freeton-crypto/compile.sh
 src/freeton-crypto/test*
 src/freeton-crypto/*.tvc
+src/freeton-crypto/*.keys.json
+src/freeton-crypto/*.conf.json

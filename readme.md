@@ -2,6 +2,10 @@
 
 #### Author: Andrei Marchenko <ftkvyn@gmail.com>, @ftkvyn, [LinkedIn](https://www.linkedin.com/in/ftkvyn/)
 
+#### Profile on [forum.freeton.org](https://forum.freeton.org/u/ftkvyn/)
+
+### * FreeTON network is supported as well.
+
 ## Short description
 
 The goal of the project is to implement the register for giving grades to the students in a school or university. The grades are stored in TON blockchain. It is not possible to remove or to edit the grade after it was given. It's also not possible to fake the grades.
@@ -12,7 +16,11 @@ The goal of the project is to implement the register for giving grades to the st
 
 Following instruments are working on TON blockchain:
 
-*	Smartcontract 
+*	Smartcontract (FreeTON version, Solidity)
+	*	**register.sol** - source code of the contract. Creates and stores the students and the grades.
+	*	**register.code**, **register.abi.json** - compiled from **register.sol** using `solc` Solidity to TON compiler.
+
+*	Smartcontract (Classic TON version)
 	*	**register.fc** - creates and stores the students and the grades.
 *	Fift scripts 
 	*	**new-register.fif** - creates new register smart contract
@@ -25,7 +33,7 @@ The grades are only created - after the creation it's not possible to remove or 
 
 The project was made with the assumption that the student's grade is not a secret or sencitive information. That's why the grades are avaliable as-is, without any encription.
 
-### Off-chain
+### Off-chain (Only for Classic TON, FreeTON is not yet supported)
 
 * Teacher's application
 	*	Creates and manage several registers (for different classes and subjects)
@@ -37,7 +45,65 @@ The project was made with the assumption that the student's grade is not a secre
 	*	Handles several existing register
 	*	Displays the single student's marks in given register
 
-## Requirements
+## Requirements (FreeTON)
+
+Applications are developed and tested on Ubuntu Linux, correct work on other systems is not guaraneed.
+To be able to build and run scripts and to be able to use teacher's and student's application following requirements have to be fulfilled:
+
+* Download or build from sources FreeTON tools - Solidity compiler and `tvm_linker` as described in the instruction:
+	*	Solidity tools for FreeTON: [https://docs.ton.dev/86757ecb2/p/950f8a-write-smart-contract-in-solidity](https://docs.ton.dev/86757ecb2/p/950f8a-write-smart-contract-in-solidity)
+	*	General FreeTON tools: [https://docs.ton.dev/86757ecb2/p/552389-general](https://docs.ton.dev/86757ecb2/p/552389-general)
+	*	Solidity to TON compiler: [https://github.com/tonlabs/TON-Solidity-Compiler](https://github.com/tonlabs/TON-Solidity-Compiler)
+	*	`tvm_linker`: [https://github.com/tonlabs/TVM-linker](https://github.com/tonlabs/TVM-linker)
+	*	Useful tookit for communitcation with TON - tonos-cli [https://github.com/tonlabs/tonos-cli](https://github.com/tonlabs/tonos-cli)
+
+## Build instructions (FreeTON)
+
+### Crypto
+
+To build smart contract from Solidity sources, go to `freeton-crypto` folder and run
+
+```
+solc register.sol
+```
+
+Then to prepare the contract for uploading to the blockchain, run:
+```
+tvm_linker compile register.code --lib /usr/lib/stdlib_sol.tvm --abi-json register.abi.json
+
+```
+You'll get a file with a long name and `.tvc` extension. The file name is the address of your contract. Then run the following command to generate your keys:
+```
+tonos-cli genaddr <contract>.tvc register.abi.json --genkey register.keys.json
+```
+Address of your contract in the blockchain is located after `Raw address:`. It's time to send some coins to that address. After you've done that, you may deploy your contract using the following instruction:
+```
+tonos-cli deploy --abi register.abi.json --sign register.keys.json <contract>.tvc {}
+```
+
+Congratulations! Now you may run following commands on the contract:
+
+Creating a student:
+```
+tonos-cli call '<YourAddress>' addStudent '{"studentId":"123"}' --abi register.abi.json --sign register.keys.json
+```
+
+Creating a mark:
+```
+tonos-cli call '<YourAddress>' addMark '{"studentId":"123", "markValue":"5", "message":"Good job!"}' --abi register.abi.json --sign register.keys.json
+```
+
+Getting students:
+```
+tonos-cli call '<YourAddress>' getStudents '{}' --abi register.abi.json
+```
+
+Getting a students mark:
+```
+tonos-cli call '<YourAddress>' getStudentMarks '{"studentId":"123"}' --abi register.abi.json
+```
+
+## Requirements (Classic TON)
 
 Applications are developed and tested on Ubuntu Linux, correct work on other systems is not guaraneed.
 To be able to build and run scripts and to be able to use teacher's and student's application following requirements have to be fulfilled:
@@ -47,7 +113,7 @@ To be able to build and run scripts and to be able to use teacher's and student'
 * Set up links to `fift` and `func` so that they can be used from the command line.
 * For now the applications save their generated files (private keys, contract addresses and .boc files to upload to the blockchain) to the directory from which they are runned, so they need to have write permissions for their directories.
 
-## Build instructions
+## Build instructions (Classic TON)
 
 ### Crypto
 
@@ -66,7 +132,7 @@ npm install
 npm start
 ```
 
-## Instructions
+## Instructions (For the Classic TON version)
 
 ### Teacher's app
 
@@ -120,8 +186,3 @@ In the student's app we need to provide the information about the register that 
 She then will be able to select the contract and see her grades:
 
 ![Student's app](instruction/11.png)
-
-
-## Final remarks
-
-The applications code is pretty ugly because I didn't want to spend time for it now, preferring to give more attention to the smartcontract's code - fift and func. So please don't judge UI and my javaScript in these submissions - I know that it's horrible and before giving the applications to the real users I'll write much better code and do also much better UI. Applications in the current form are only proof of concepts and not all possibilities that are implemented in the smart contracts and fift scripts present in the apps.
